@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Drift Rush - V38: Bogen entfernt & KI-Upgrade</title>
+    <title>Drift Rush - Christmas Special</title>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
@@ -12,9 +12,11 @@
         body { margin: 0; overflow: hidden; background-color: #000; }
         canvas { display: block; }
         
+        /* WEIHNACHTS-FARBSCHEMA: Rot (#d42426) und Grün (#165b33) statt Gelb/Blau */
         #start-screen, #game-menu, #hud, #controls-hud, #settings-menu {
             position: absolute; font-family: 'Orbitron', sans-serif; 
-            color: #ffcc00; z-index: 10;
+            color: #d42426; /* Weihnachtsrot */
+            z-index: 10;
         }
 
         /* --- MENÜ STILE (START/MENU/SETTINGS) --- */
@@ -25,16 +27,18 @@
             align-items: center; text-align: center;
             transition: opacity 1s, visibility 1s;
         }
-        #start-screen h1 { font-size: 8em; margin-bottom: 5px; letter-spacing: 10px; text-shadow: 0 0 20px #ffcc00; }
-        #start-screen p { font-family: 'Roboto', sans-serif; color: #fff; font-size: 1.5em; font-weight: 300; }
+        /* Text mit "Schnee"-Effekt (weißer Glow) */
+        #start-screen h1 { font-size: 8em; margin-bottom: 5px; letter-spacing: 10px; text-shadow: 0 0 20px #d42426, 0 0 40px #fff; color: #fff; }
+        #start-screen p { font-family: 'Roboto', sans-serif; color: #ccc; font-size: 1.5em; font-weight: 300; }
         .start-button {
-            background-color: #ffcc00; color: #111; border: none;
+            background-color: #d42426; color: #fff; border: none; /* Roter Button */
             padding: 25px 60px; margin: 40px 0 20px 0; font-size: 2.5em;
             font-weight: 700; border-radius: 12px; cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
-            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+            box-shadow: 0 0 15px rgba(212, 36, 38, 0.6);
+            border: 2px solid #fff;
         }
-        .start-button:hover { background-color: #fff; transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 255, 255, 0.7); }
+        .start-button:hover { background-color: #fff; color: #d42426; transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 255, 255, 0.9); }
         
         #game-menu, #settings-menu {
             top: 0; left: 0; width: 100%; height: 100%;
@@ -45,37 +49,42 @@
         }
         .menu-panel {
             background-color: #1a1a1a; padding: 40px 50px;
-            border-radius: 20px; box-shadow: 0 0 40px rgba(255, 204, 0, 0.8); 
-            border: 3px solid #ffcc00; max-width: 800px; width: 100%;
+            border-radius: 20px; box-shadow: 0 0 40px rgba(212, 36, 38, 0.5); 
+            border: 3px solid #165b33; /* Grüner Rahmen */
+            max-width: 800px; width: 100%;
             box-sizing: border-box; max-height: 95vh; overflow-y: auto; 
         }
-        #game-menu h1, #settings-menu h1 { font-family: 'Orbitron', sans-serif; font-size: 4em; margin-bottom: 15px; letter-spacing: 5px; text-shadow: 0 0 15px #ffcc00; color: #ffcc00; }
-        #game-menu h2, #settings-menu h2 { font-family: 'Orbitron', sans-serif; margin-top: 0; color: #fff; font-size: 1.8em; letter-spacing: 1px; margin-bottom: 30px; border-bottom: 2px solid #ffcc00; padding-bottom: 10px; display: inline-block; }
+        #game-menu h1, #settings-menu h1 { font-family: 'Orbitron', sans-serif; font-size: 4em; margin-bottom: 15px; letter-spacing: 5px; text-shadow: 0 0 15px #d42426; color: #fff; }
+        #game-menu h2, #settings-menu h2 { font-family: 'Orbitron', sans-serif; margin-top: 0; color: #165b33; font-size: 1.8em; letter-spacing: 1px; margin-bottom: 30px; border-bottom: 2px solid #d42426; padding-bottom: 10px; display: inline-block; }
+        
         .menu-button {
-            background-color: #ffcc00; color: #111; border: none; 
+            background-color: #165b33; /* Grüner Button */
+            color: #fff; border: none; 
             padding: 18px 40px; margin: 30px 0 0 0; font-family: 'Orbitron', sans-serif;
             font-size: 2em; font-weight: 700; border-radius: 10px; cursor: pointer;
             transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+            box-shadow: 0 0 10px rgba(22, 91, 51, 0.5);
         }
-        .menu-button:hover { background-color: #fff; transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 255, 255, 0.7); }
-        .menu-button.small-btn { font-size: 1.2em; padding: 12px 25px; margin: 15px 10px; }
+        .menu-button:hover { background-color: #d42426; transform: scale(1.05); box-shadow: 0 0 20px rgba(212, 36, 38, 0.7); }
+        .menu-button.small-btn { font-size: 1.2em; padding: 12px 25px; margin: 15px 10px; background-color: #333; }
+        .menu-button.small-btn:hover { background-color: #165b33; }
         
         .selection-group { margin: 20px 0; padding: 15px; border-radius: 10px; background-color: #2a2a2a; text-align: left; border: 1px solid #444; box-shadow: inset 0 0 8px rgba(0,0,0,0.5); }
-        .selection-group h3 { font-family: 'Orbitron', sans-serif; margin-top: 0; color: #ffcc00; border-bottom: 1px solid #777; padding-bottom: 8px; margin-bottom: 15px; font-size: 1.5em; letter-spacing: 1px; }
+        .selection-group h3 { font-family: 'Orbitron', sans-serif; margin-top: 0; color: #d42426; border-bottom: 1px solid #777; padding-bottom: 8px; margin-bottom: 15px; font-size: 1.5em; letter-spacing: 1px; }
+        
         .selection-option {
             background-color: #333; color: #eee; padding: 12px 15px; margin-bottom: 8px;
             border-radius: 8px; cursor: pointer; transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
             border: 1px solid #555; font-family: 'Roboto', sans-serif; font-size: 1em; 
             display: flex; align-items: center;
         }
-        .selection-option:hover { background-color: #444; border-color: #777; }
+        .selection-option:hover { background-color: #444; border-color: #165b33; }
         .selection-option.selected { 
             background-color: #444; 
-            border-color: #ffcc00; 
-            box-shadow: 0 0 8px rgba(255, 204, 0, 0.5), inset 0 0 5px rgba(255, 204, 0, 0.3); 
+            border-color: #d42426; 
+            box-shadow: 0 0 8px rgba(212, 36, 38, 0.5), inset 0 0 5px rgba(212, 36, 38, 0.3); 
         }
-        .option-icon { margin-right: 12px; font-size: 1.3em; color: #ffcc00; line-height: 1; }
+        .option-icon { margin-right: 12px; font-size: 1.3em; color: #165b33; line-height: 1; }
         .option-text strong { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1em; }
         .option-text span { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 0.9em; color: #ccc; margin-left: 6px; }
         .selection-option input[type="radio"] { display: none; }
@@ -85,7 +94,7 @@
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
         .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #00ccff; }
+        input:checked + .slider { background-color: #165b33; } /* Grün bei Aktivierung */
         input:checked + .slider:before { transform: translateX(26px); }
         .ai-toggle-option {
             background-color: #333; color: #eee; padding: 12px 15px; margin-bottom: 8px;
@@ -99,63 +108,64 @@
         .setting-item {
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px; margin-bottom: 10px; background-color: #3a3a3a;
-            border-radius: 8px; border-left: 5px solid #00ccff;
+            border-radius: 8px; border-left: 5px solid #d42426;
             font-family: 'Roboto', sans-serif; font-size: 1.1em;
         }
         .setting-label {
             color: #fff; font-weight: 700;
         }
         .setting-control {
-            color: #ffcc00;
+            color: #d42426;
             font-family: 'Orbitron', sans-serif;
             font-weight: 400;
         }
         .setting-control select, .setting-control input {
-            padding: 8px; border-radius: 5px; border: 1px solid #00ccff;
-            background-color: #1a1a1a; color: #ffcc00;
+            padding: 8px; border-radius: 5px; border: 1px solid #165b33;
+            background-color: #1a1a1a; color: #fff;
             font-family: 'Orbitron', sans-serif;
             font-size: 1em;
         }
         
         /* --- HUD & SONSTIGE ELEMENTE --- */
         #version-text { position: absolute; top: 10px; left: 10px; font-family: 'Roboto', sans-serif; font-size: 1.2em; color: #888; letter-spacing: 1px; z-index: 11; }
-        #music-button { background: rgba(0, 0, 0, 0.7); color: #ffcc00; border: 2px solid #ffcc00; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; }
-        #music-button:hover { background: #ffcc00; color: #000; }
+        #music-button { background: rgba(0, 0, 0, 0.7); color: #d42426; border: 2px solid #d42426; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; }
+        #music-button:hover { background: #d42426; color: #fff; }
         #hud {
             top: 20px; right: 20px; font-size: 20px; text-align: right; user-select: none;
             display: none; background: rgba(0, 0, 0, 0.6); padding: 15px 25px;
-            border-radius: 10px; border: 2px solid #ffcc00; box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+            border-radius: 10px; border: 2px solid #d42426; box-shadow: 0 0 10px rgba(212, 36, 38, 0.5);
             min-width: 180px; 
         }
         .hud-line { margin-bottom: 5px; color: #fff; }
-        #speed-value { font-weight: bold; font-size: 45px; color: #00ff00; text-shadow: 0 0 5px #00ff00;}
-        #drift-angle-value { font-size: 20px; font-weight: bold; color: #ff4444; text-shadow: 0 0 5px #ff4444;}
-        #drift-label { color: #ffcc00; font-size: 16px; }
-        #score-line { border-top: 1px solid #444; padding-top: 8px; margin-top: 10px; color: #ffcc00; font-size: 1.2em; font-weight: 700;}
+        #speed-value { font-weight: bold; font-size: 45px; color: #165b33; text-shadow: 0 0 5px #165b33;} /* Grün für Speed */
+        #drift-angle-value { font-size: 20px; font-weight: bold; color: #ff0000; text-shadow: 0 0 5px #ff0000;}
+        #drift-label { color: #d42426; font-size: 16px; }
+        #score-line { border-top: 1px solid #444; padding-top: 8px; margin-top: 10px; color: #d42426; font-size: 1.2em; font-weight: 700;}
         #score-value { font-size: 1.8em; color: #fff; text-shadow: 0 0 8px #fff; margin-left: 10px;}
-        #multiplier-line { color: #ff00ff; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px #ff00ff;}
-        #multiplier-label { font-size: 0.7em; color: #ff00ff; margin-right: 5px;}
+        #multiplier-line { color: #ffd700; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px #ffd700;} /* Gold für Multiplier */
+        #multiplier-label { font-size: 0.7em; color: #ffd700; margin-right: 5px;}
         #controls-hud {
             bottom: 20px; left: 20px; font-size: 14px; 
             text-align: left; user-select: none;
             display: none; background: rgba(0, 0, 0, 0.6); 
             padding: 10px 15px; border-radius: 10px; 
-            border: 2px solid #00ccff; 
-            box-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+            border: 2px solid #165b33; 
+            box-shadow: 0 0 10px rgba(22, 91, 51, 0.5);
         }
         .control-line { margin-bottom: 3px; color: #fff; display: flex; align-items: center; font-family: 'Roboto', sans-serif; font-size: 1.1em; }
-        .control-key { background: #00ccff; color: #000; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 8px; font-family: 'Orbitron', sans-serif; border: 1px solid #fff; }
+        .control-key { background: #165b33; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 8px; font-family: 'Orbitron', sans-serif; border: 1px solid #fff; }
         #madschis-logo {
             position: absolute; top: 20px; left: 50%; transform: translateX(-50%); 
             font-family: 'Orbitron', sans-serif; font-size: 2.2em; font-weight: 900;
             letter-spacing: 3px; z-index: 100; display: none; pointer-events: none; 
-            background: linear-gradient(to right, #ff0000, #ff8000, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            /* Weihnachtlicher Gradient */
+            background: linear-gradient(to right, #ff0000, #00ff00, #ffd700, #ff0000);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: rainbow-anim 8s linear infinite; text-shadow: 0 0 10px rgba(255,255,255,0.4); 
         }
         @keyframes rainbow-anim { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
         
-        /* MOBILE OPTIMIERUNG (Kurzform) */
+        /* MOBILE OPTIMIERUNG */
         @media screen and (max-width: 768px) {
             #start-screen h1 { font-size: 4.5em; letter-spacing: 5px; }
             .start-button { padding: 15px 40px; font-size: 1.8em; margin: 30px 0; }
@@ -171,11 +181,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <div id="version-text">Version 38</div>
+    <div id="version-text">Christmas Special (V38)</div>
     
     <div id="start-screen">
         <h1>DRIFT RUSH</h1>
-        <p>Bereit für den besten Drift?</p>
+        <p style="color: #ffd700;">🎅 Christmas Edition 🎄</p>
+        <p>Bereit für den Weihnachts-Drift?</p>
         <button class="start-button" onclick="startAnimationAndShowMenu()">START</button>
         <button id="music-button" onclick="toggleMusic(true)" style="position: absolute; bottom: 20px; left: 20px; display: block;">Musik: AN 🎵</button>
     </div>
@@ -183,7 +194,7 @@
     <div id="game-menu">
         <div class="menu-panel">
             <h1>DRIFT RUSH</h1>
-            <h2>WÄHLE DEINE KONFIGURATION</h2>
+            <h2 style="color: #fff; text-shadow: 0 0 10px #d42426;">FROHE WEIHNACHTEN!</h2>
 
             <div class="selection-group">
                 <h3><span class="option-icon">🎧</span> WÄHLE MUSIK</h3>
@@ -203,7 +214,7 @@
 
 
             <div class="selection-group">
-                <h3><span class="option-icon">🚗</span> WÄHLE AUTO</h3>
+                <h3><span class="option-icon">🚗</span> WÄHLE SCHLITTEN (AUTO)</h3>
                 <label class="selection-option" data-car="drift_racer">
                     <input type="radio" name="car_model" value="drift_racer" checked>
                     <span class="option-icon">🔷</span> <span class="option-text"><strong>Drift Racer</strong> <span>(Beste Balance für Grip & Drift)</span></span>
@@ -220,21 +231,37 @@
                     <input type="radio" name="car_model" value="heavy_truck">
                     <span class="option-icon">🟢</span> <span class="option-text"><strong>Heavy Truck</strong> <span>(Langsam, hohe Masse)</span></span>
                 </label>
+                <label class="selection-option" data-car="supercar">
+                    <input type="radio" name="car_model" value="supercar">
+                    <span class="option-icon">💖</span> <span class="option-text"><strong>Supercar</strong> <span>(Extrem schnell, geringer Grip)</span></span>
+                </label>
+                <label class="selection-option" data-car="rally_car">
+                    <input type="radio" name="car_model" value="rally_car">
+                    <span class="option-icon">🌿</span> <span class="option-text"><strong>Rally Car</strong> <span>(Hoher Grip, perfekte Kurven)</span></span>
+                </label>
             </div>
             
             <div class="selection-group">
-                <h3><span class="option-icon">🗺️</span> WÄHLE MAP</h3>
+                <h3><span class="option-icon">❄️</span> WÄHLE MAP</h3>
+                <label class="selection-option" data-map="snow_drift_area">
+                    <input type="radio" name="map_name" value="snow_drift_area" checked>
+                    <span class="option-icon">❄️</span> <span class="option-text"><strong>Schnee-Drift-Fläche</strong> <span>(Das volle Winter-Erlebnis)</span></span>
+                </label>
                 <label class="selection-option" data-map="parking_lot">
                     <input type="radio" name="map_name" value="parking_lot">
-                    <span class="option-icon">🅿️</span> <span class="option-text"><strong>Parkplatz-Arena</strong> <span>(Realistischer Parkplatz mit Laternen)</span></span>
+                    <span class="option-icon">🅿️</span> <span class="option-text"><strong>Verschneiter Parkplatz</strong> <span>(Mit Laternen und Eis)</span></span>
                 </label>
                 <label class="selection-option" data-map="race_track">
-                    <input type="radio" name="map_name" value="race_track" checked>
-                    <span class="option-icon">🏁</span> <span class="option-text"><strong>Rennstrecke</strong> <span>(Mit Curbs, Start-/Ziellinie)</span></span>
+                    <input type="radio" name="map_name" value="race_track">
+                    <span class="option-icon">🏁</span> <span class="option-text"><strong>Eis-Rennstrecke</strong> <span>(Rutschige Kurven)</span></span>
                 </label>
-                <label class="selection-option" data-map="snow_drift_area">
-                    <input type="radio" name="map_name" value="snow_drift_area">
-                    <span class="option-icon">❄️</span> <span class="option-text"><strong>Schnee-Drift-Fläche</strong> <span>(Low-Grip-Physik für extremes Driften)</span></span>
+                <label class="selection-option" data-map="building_city">
+                    <input type="radio" name="map_name" value="building_city">
+                    <span class="option-icon">🏙️</span> <span class="option-text"><strong>Winter Stadt</strong> <span>(Kurven zwischen Gebäuden)</span></span>
+                </label>
+                <label class="selection-option" data-map="simple_parking_lot">
+                    <input type="radio" name="map_name" value="simple_parking_lot">
+                    <span class="option-icon">🚗</span> <span class="option-text"><strong>Kleiner Eisparkplatz</strong> <span>(Kompakt)</span></span>
                 </label>
             </div>
             
@@ -254,11 +281,11 @@
 
             
             <p style="font-family: 'Roboto', sans-serif; font-size: 1.1em; color: #fff; margin-top: 30px;">
-                <span style="color: #ffcc00; font-weight: bold;">Steuerung:</span> Beschleunigen (<kbd>W</kbd>), Bremsen/Rückwärts (<kbd>S</kbd>), Lenken (<kbd>A</kbd>/<kbd>D</kbd>), Handbremse (<kbd>Space</kbd>).
+                <span style="color: #d42426; font-weight: bold;">Steuerung:</span> Beschleunigen (<kbd>W</kbd>), Bremsen/Rückwärts (<kbd>S</kbd>), Lenken (<kbd>A</kbd>/<kbd>D</kbd>), Handbremse (<kbd>Space</kbd>).
             </p>
 
             <button class="menu-button small-btn" onclick="showSettings()">EINSTELLUNGEN ⚙️</button>
-            <button class="menu-button" onclick="startGame()">SPIEL STARTEN</button>
+            <button class="menu-button" onclick="startGame()">LOS GEHT'S 🎄</button>
         </div>
     </div>
     
@@ -297,7 +324,7 @@
                     <span class="setting-label">Baum-Anzahl</span>
                     <span class="setting-control">
                         <select id="setting-trees">
-                            <option value="high" selected>Viele</option>
+                            <option value="high" selected>Viele (Weihnachtswald)</option>
                             <option value="low">Wenige</option>
                             <option value="off">Keine</option>
                         </select>
@@ -344,7 +371,7 @@
     </div>
     
     <div id="controls-hud">
-        <div style="font-family: 'Orbitron', sans-serif; font-weight: 700; color: #00ccff; margin-bottom: 5px; font-size: 1.2em;">STEUERUNG</div>
+        <div style="font-family: 'Orbitron', sans-serif; font-weight: 700; color: #165b33; margin-bottom: 5px; font-size: 1.2em;">STEUERUNG</div>
         <div class="control-line"><span class="control-key">W</span> Beschleunigen</div>
         <div class="control-line"><span class="control-key">S</span> Bremsen / Rückwärts</div>
         <div class="control-line"><span class="control-key">A</span> Links lenken</div>
@@ -377,7 +404,7 @@
 
     <script>
         // GLOBALE VARIABLEN
-        const GAME_VERSION = "V38"; // <<< GEÄNDERT: Version 38 (Bogen entfernt & KI-Upgrade)
+        const GAME_VERSION = "Christmas Special (V38)"; // <<< GEÄNDERT
         let scene, camera, renderer;
         let car; 
         let ambientLight, sunLight;
@@ -445,58 +472,82 @@
         // Auto-Konfigurationen
         const carConfigs = {
             'drift_racer': {
-                color: 0x0000ff, 
-                mass: 1.5, 
-                maxPower: 160,         
-                brakeForce: 250, 
-                steerAngle: Math.PI / 10, 
-                steerSpeed: 3.5,          
-                longitudinalGrip: 0.9, 
-                sideGrip: 0.75,         
-                handbrakeFactor: 0.2,   
-                aiSpeed: 30             
+                color: 0x0000ff,
+                mass: 1.5,
+                maxPower: 160,
+                brakeForce: 250,
+                steerAngle: Math.PI / 10,
+                steerSpeed: 3.5,
+                longitudinalGrip: 0.9,
+                sideGrip: 0.75,
+                handbrakeFactor: 0.2,
+                aiSpeed: 30
             },
             'muscle_car': {
-                color: 0xff0000, 
-                mass: 2.0, 
-                maxPower: 220, 
-                brakeForce: 180, 
-                steerAngle: Math.PI / 16, 
-                steerSpeed: 2.5, 
-                longitudinalGrip: 0.8, 
-                sideGrip: 0.60,         
+                color: 0xff0000,
+                mass: 2.0,
+                maxPower: 220,
+                brakeForce: 180,
+                steerAngle: Math.PI / 16,
+                steerSpeed: 2.5,
+                longitudinalGrip: 0.8,
+                sideGrip: 0.60,
                 handbrakeFactor: 0.1,
                 aiSpeed: 35
             },
             'sport_coupe': {
-                color: 0xffcc00, 
-                mass: 1.2, 
-                maxPower: 180, 
-                brakeForce: 300, 
-                steerAngle: Math.PI / 12, 
-                steerSpeed: 4.0, 
-                longitudinalGrip: 0.95, 
-                sideGrip: 0.85,         
+                color: 0xffcc00,
+                mass: 1.2,
+                maxPower: 180,
+                brakeForce: 300,
+                steerAngle: Math.PI / 12,
+                steerSpeed: 4.0,
+                longitudinalGrip: 0.95,
+                sideGrip: 0.85,
                 handbrakeFactor: 0.3,
                 aiSpeed: 25
             },
             'heavy_truck': {
-                color: 0x38761d, 
-                mass: 5.0, 
-                maxPower: 100, 
-                brakeForce: 400, 
-                steerAngle: Math.PI / 20, 
-                steerSpeed: 1.5, 
+                color: 0x38761d,
+                mass: 5.0,
+                maxPower: 100,
+                brakeForce: 400,
+                steerAngle: Math.PI / 20,
+                steerSpeed: 1.5,
                 longitudinalGrip: 0.99,
-                sideGrip: 0.95,      
+                sideGrip: 0.95,
                 handbrakeFactor: 0.5,
                 aiSpeed: 20
+            },
+            'supercar': {
+                color: 0xff0080,
+                mass: 1.0,
+                maxPower: 250,
+                brakeForce: 350,
+                steerAngle: Math.PI / 8,
+                steerSpeed: 5.0,
+                longitudinalGrip: 0.85,
+                sideGrip: 0.65,
+                handbrakeFactor: 0.15,
+                aiSpeed: 40
+            },
+            'rally_car': {
+                color: 0x00ff80,
+                mass: 1.8,
+                maxPower: 200,
+                brakeForce: 280,
+                steerAngle: Math.PI / 9,
+                steerSpeed: 4.5,
+                longitudinalGrip: 0.98,
+                sideGrip: 0.90,
+                handbrakeFactor: 0.25,
+                aiSpeed: 28
             }
         };
 
         let currentCarConfig = carConfigs['drift_racer']; 
         
-        // NEU: KI Car Klasse (Verbesserung in der Update-Methode)
+        // KI Car Klasse (Verbesserung in der Update-Methode)
         class AICar {
             constructor(configName, color, waypoints) {
                 this.config = carConfigs[configName];
@@ -508,7 +559,7 @@
                 this.mesh.rotation.y = -Math.PI / 2; 
             }
             
-            // <<< GEÄNDERT: Bessere KI-Logik (V38)
+            // Bessere KI-Logik (V38)
             update(deltaTime) {
                 if (this.waypoints.length === 0) return;
 
@@ -616,24 +667,30 @@
                 this.mesh.position.addScaledVector(this.velocity, deltaTime);
                 this.mesh.position.y = trackY + (0.5 * CAR_SCALE); 
             }
-            // --- ENDE KI-UPGRADE ---
         }
         
-        // Waypoint Daten (Unverändert)
+        // Waypoint Daten
         const mapWaypoints = {
             'parking_lot': [
-                { x: 0, z: 50 }, { x: 50, z: 50 }, { x: 50, z: -50 }, { x: -50, z: -50 }, { x: -50, z: 50 } 
+                { x: 0, z: 50 }, { x: 50, z: 50 }, { x: 50, z: -50 }, { x: -50, z: -50 }, { x: -50, z: 50 }
             ],
             'race_track': [
-                { x: 0, z: 120 }, { x: 100, z: 120 }, { x: 140, z: 80 }, { x: 140, z: -80 }, { x: 100, z: -120 }, 
+                { x: 0, z: 120 }, { x: 100, z: 120 }, { x: 140, z: 80 }, { x: 140, z: -80 }, { x: 100, z: -120 },
                 { x: -100, z: -120 }, { x: -140, z: -80 }, { x: -140, z: 80 }, { x: -100, z: 120 }
             ],
             'snow_drift_area': [
-                { x: 0, z: 0 } 
+                { x: 0, z: 0 }
+            ],
+            'building_city': [
+                { x: 0, z: 100 }, { x: 80, z: 100 }, { x: 100, z: 80 }, { x: 100, z: 0 }, { x: 80, z: -20 },
+                { x: 40, z: -20 }, { x: 20, z: 0 }, { x: 20, z: 80 }, { x: -20, z: 80 }, { x: -20, z: 0 },
+                { x: -40, z: -20 }, { x: -80, z: -20 }, { x: -100, z: 0 }, { x: -100, z: 80 }, { x: -80, z: 100 },
+                { x: 0, z: 100 }
+            ],
+            'simple_parking_lot': [
+                { x: 0, z: 30 }, { x: 30, z: 30 }, { x: 30, z: -30 }, { x: -30, z: -30 }, { x: -30, z: 30 }
             ]
         };
-        // --- ENDE WAYPOINT DATEN ---
-        
         
         // --- MENÜ, EINSTELLUNGEN & MUSIK FUNKTIONEN ---
         
@@ -916,8 +973,10 @@
             if (renderer) return;
 
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB); 
-            scene.fog = new THREE.Fog(0x87CEEB, 150, 500); 
+            // WINTER HIMMEL (Grau-Blau)
+            const winterColor = 0xcceeff;
+            scene.background = new THREE.Color(winterColor); 
+            scene.fog = new THREE.Fog(winterColor, 100, 400); 
             
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -925,10 +984,10 @@
             renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
             document.body.appendChild(renderer.domElement);
 
-            ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Helleres Ambient für Schnee
             scene.add(ambientLight);
 
-            sunLight = new THREE.DirectionalLight(0xffddaa, 3.5);
+            sunLight = new THREE.DirectionalLight(0xffffee, 3.0); // Kaltes Sonnenlicht
             sunLight.position.set(200, 150, 100);
             sunLight.castShadow = true;
 
@@ -960,6 +1019,29 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        // NEU: Weihnachtliche Lichterketten am Auto
+        function createChristmasLights(carGroup) {
+            const lightColors = [0xff0000, 0x00ff00, 0xffd700, 0x0000ff]; // Rot, Grün, Gold, Blau
+            const numLights = 16;
+            const length = 4.5 * CAR_SCALE;
+            const width = 2.5 * CAR_SCALE;
+            const height = 1.2 * CAR_SCALE;
+            
+            for(let i = 0; i < numLights; i++) {
+                const color = lightColors[i % lightColors.length];
+                const bulbGeo = new THREE.SphereGeometry(0.1, 8, 8);
+                const bulbMat = new THREE.MeshBasicMaterial({ color: color });
+                const bulb = new THREE.Mesh(bulbGeo, bulbMat);
+                
+                // Positionierung entlang der Seiten
+                const side = i < numLights/2 ? 1 : -1;
+                const posAlong = ((i % (numLights/2)) / (numLights/2)) * length - length/2 + 0.2;
+                
+                bulb.position.set(side * (width/2 + 0.05), height - 0.2, posAlong);
+                carGroup.add(bulb);
+            }
+        }
+
         function createCarModel(color, isAI) {
             const carGroup = new THREE.Group();
             
@@ -969,6 +1051,9 @@
             carBody.position.y = 0.6 * CAR_SCALE; 
             carBody.castShadow = true;
             carGroup.add(carBody);
+            
+            // <<< NEU: Lichterketten hinzufügen
+            createChristmasLights(carGroup);
 
             const cabinGeometry = new THREE.BoxGeometry(2 * CAR_SCALE, 0.8 * CAR_SCALE, 1.8 * CAR_SCALE);
             const cabinMaterial = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.2, roughness: 0.7 });
@@ -1178,61 +1263,195 @@
             scene.add(startLine);
         }
         
-        // createTrees (V35, nur für Schnee)
+        // <<< NEU: Weihnachtsbäume (Kugeln hinzugefügt)
         function createTrees(mapName) {
             const treeCount = gameSettings.trees === 'high' ? 100 : 30;
-            const maxRange = trackSize * 0.8; 
-            const roadWidth = mapName === 'race_track' ? 30 : 20; 
+            const maxRange = trackSize * 0.8;
+            const roadWidth = mapName === 'race_track' ? 30 : 20;
 
             for (let i = 0; i < treeCount; i++) {
                 let treePos;
                 let validPos = false;
-                
+
                 while (!validPos) {
                     const x = (Math.random() - 0.5) * maxRange * 2;
                     const z = (Math.random() - 0.5) * maxRange * 2;
                     treePos = new THREE.Vector3(x, 0, z);
 
                     if (mapName === 'snow_drift_area') {
-                         if (treePos.length() > 50) { 
-                              validPos = true; 
-                         }
+                          if (treePos.length() > 50) {
+                               validPos = true;
+                          }
                     } else {
-                         if (Math.abs(x) > roadWidth * 2 || Math.abs(z) > roadWidth * 2) { 
-                              validPos = true;
-                         }
+                          if (Math.abs(x) > roadWidth * 2 || Math.abs(z) > roadWidth * 2) {
+                               validPos = true;
+                          }
                     }
                 }
-                
+
                 const treeGroup = new THREE.Group();
                 const trunkHeight = 5 + Math.random() * 5;
                 const trunkRadius = 0.5;
 
                 const trunkGeometry = new THREE.CylinderGeometry(trunkRadius, trunkRadius, trunkHeight, 8);
-                const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x654321 }); 
+                const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x654321 });
                 const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
                 trunk.position.y = trunkHeight / 2 + grassY;
                 trunk.castShadow = true;
                 trunk.receiveShadow = true;
                 treeGroup.add(trunk);
 
-                const coneGeometry = new THREE.ConeGeometry(3, 8 + Math.random() * 4, 16);
-                const coneMaterial = new THREE.MeshLambertMaterial({ color: 0x228b22 }); 
+                const coneHeight = 8 + Math.random() * 4;
+                const coneGeometry = new THREE.ConeGeometry(3, coneHeight, 16);
+                const coneMaterial = new THREE.MeshLambertMaterial({ color: 0x004d00 }); // Dunkles Tannengrün
                 const cone = new THREE.Mesh(coneGeometry, coneMaterial);
                 cone.position.y = trunkHeight + 2 + grassY;
                 cone.castShadow = true;
                 treeGroup.add(cone);
-                
+
+                // Christbaumkugeln
+                const ornamentColors = [0xff0000, 0xffff00, 0x0000ff, 0xffffff];
+                for(let k=0; k<6; k++) {
+                    const ornaGeo = new THREE.SphereGeometry(0.3, 8, 8);
+                    const ornaMat = new THREE.MeshBasicMaterial({ color: ornamentColors[k%4] });
+                    const orna = new THREE.Mesh(ornaGeo, ornaMat);
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const h = (Math.random() - 0.5) * coneHeight * 0.8; 
+                    const r = (coneHeight/2 - h) * 0.3; 
+                    
+                    orna.position.set(Math.cos(angle)*r, h, Math.sin(angle)*r);
+                    cone.add(orna);
+                }
+
                 treeGroup.position.copy(treePos);
                 scene.add(treeGroup);
             }
+        }
+
+        // NEU: Spezielle Elemente für Maps
+        function createBarrel(x, z) {
+            const barrelGroup = new THREE.Group();
+            const barrelGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 16);
+            const barrelMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513, metalness: 0.1, roughness: 0.8 });
+            const barrel = new THREE.Mesh(barrelGeometry, barrelMaterial);
+            barrel.position.y = 0.5 + grassY;
+            barrel.castShadow = true;
+            barrel.receiveShadow = true;
+            barrelGroup.add(barrel);
+
+            // Metallringe
+            const ringGeometry = new THREE.TorusGeometry(0.52, 0.05, 8, 16);
+            const ringMaterial = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.9, roughness: 0.1 });
+            const topRing = new THREE.Mesh(ringGeometry, ringMaterial);
+            topRing.position.y = 0.95 + grassY;
+            topRing.rotation.x = Math.PI / 2;
+            barrelGroup.add(topRing);
+
+            const bottomRing = new THREE.Mesh(ringGeometry, ringMaterial);
+            bottomRing.position.y = 0.05 + grassY;
+            bottomRing.rotation.x = Math.PI / 2;
+            barrelGroup.add(bottomRing);
+
+            barrelGroup.position.set(x, 0, z);
+            scene.add(barrelGroup);
+        }
+
+        function createCone(x, z) {
+            const coneGeometry = new THREE.ConeGeometry(0.3, 1, 8);
+            const coneMaterial = new THREE.MeshStandardMaterial({ color: 0xff4500, metalness: 0.1, roughness: 0.8 });
+            const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+            cone.position.set(x, 0.5 + grassY, z);
+            cone.castShadow = true;
+            cone.receiveShadow = true;
+            scene.add(cone);
+        }
+
+        function createJumpRamp(x, z, rotation) {
+            const rampGroup = new THREE.Group();
+            const rampGeometry = new THREE.BoxGeometry(4, 0.5, 8);
+            const rampMaterial = new THREE.MeshStandardMaterial({ color: 0x666666, metalness: 0.5, roughness: 0.5 });
+            const ramp = new THREE.Mesh(rampGeometry, rampMaterial);
+            ramp.position.y = 0.25 + grassY;
+            ramp.rotation.x = Math.PI / 6; // Leichte Neigung
+            ramp.castShadow = true;
+            ramp.receiveShadow = true;
+            rampGroup.add(ramp);
+
+            // Seitenwände
+            const wallGeometry = new THREE.BoxGeometry(0.2, 1, 8);
+            const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x444444 });
+            const leftWall = new THREE.Mesh(wallGeometry, wallMaterial);
+            leftWall.position.set(-1.9, 0.5 + grassY, 0);
+            leftWall.castShadow = true;
+            rampGroup.add(leftWall);
+
+            const rightWall = new THREE.Mesh(wallGeometry, wallMaterial);
+            rightWall.position.set(1.9, 0.5 + grassY, 0);
+            rightWall.castShadow = true;
+            rampGroup.add(rightWall);
+
+            rampGroup.position.set(x, 0, z);
+            rampGroup.rotation.y = rotation;
+            scene.add(rampGroup);
+        }
+
+        function createCheckpoint(x, z, rotation, isFinish) {
+            const checkpointGroup = new THREE.Group();
+            const poleGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3, 8);
+            const poleMaterial = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.2 });
+
+            const leftPole = new THREE.Mesh(poleGeometry, poleMaterial);
+            leftPole.position.set(-2, 1.5 + grassY, 0);
+            leftPole.castShadow = true;
+            checkpointGroup.add(leftPole);
+
+            const rightPole = new THREE.Mesh(poleGeometry, poleMaterial);
+            rightPole.position.set(2, 1.5 + grassY, 0);
+            rightPole.castShadow = true;
+            checkpointGroup.add(rightPole);
+
+            // Banner
+            const bannerGeometry = new THREE.PlaneGeometry(4, 1);
+            const bannerColor = isFinish ? 0x00ff00 : 0xffff00;
+            const bannerMaterial = new THREE.MeshBasicMaterial({ color: bannerColor, side: THREE.DoubleSide });
+            const banner = new THREE.Mesh(bannerGeometry, bannerMaterial);
+            banner.position.set(0, 2.5 + grassY, 0);
+            checkpointGroup.add(banner);
+
+            checkpointGroup.position.set(x, 0, z);
+            checkpointGroup.rotation.y = rotation;
+            scene.add(checkpointGroup);
+        }
+
+        function createBuilding(x, z, width, height, depth, color) {
+            const buildingGroup = new THREE.Group();
+            const buildingGeometry = new THREE.BoxGeometry(width, height, depth);
+            const buildingMaterial = new THREE.MeshStandardMaterial({ color: color, metalness: 0.1, roughness: 0.8 });
+            const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
+            building.position.y = height / 2 + grassY;
+            building.castShadow = true;
+            building.receiveShadow = true;
+            buildingGroup.add(building);
+
+            // Windows
+            const windowGeometry = new THREE.PlaneGeometry(2, 1.5);
+            const windowMaterial = new THREE.MeshBasicMaterial({ color: 0x444444, side: THREE.DoubleSide });
+            for (let i = 0; i < 4; i++) {
+                const window = new THREE.Mesh(windowGeometry, windowMaterial);
+                window.position.set(-width/2 + 1 + i*2, height/2 - 1, depth/2 + 0.01);
+                buildingGroup.add(window);
+            }
+
+            buildingGroup.position.set(x, 0, z);
+            scene.add(buildingGroup);
         }
         
         // V37: Update Map-Generierung (Unverändert)
         function createTrack(mapName) {
             
-            const isSnowMap = mapName === 'snow_drift_area';
-            let grassMaterialColor = isSnowMap ? 0xf0f8ff : 0x38761d; 
+            // <<< GEÄNDERT: Schnee für ALLE Maps
+            let grassMaterialColor = 0xffffff; // Immer weißer Schnee-Boden
             
             // 1. Gras/Boden Fläche erstellen
             const grassGeometry = new THREE.PlaneGeometry(trackSize * 2, trackSize * 2);
@@ -1257,7 +1476,7 @@
                 roadShape.lineTo(s, -s);
                 roadShape.lineTo(-s, -s);
                 roadGeometry = new THREE.ShapeGeometry(roadShape);
-                
+
                 const points = mapWaypoints[mapName];
                 centerPath = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(p.x, 0, p.z)), true);
 
@@ -1265,15 +1484,41 @@
                 const points = mapWaypoints[mapName];
                 const curve = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(p.x, 0, p.z)), true, 'centripetal');
                 centerPath = curve;
-                roadGeometry = new THREE.TubeGeometry(curve, 128, 20, 8, true); 
-                
+                roadGeometry = new THREE.TubeGeometry(curve, 128, 20, 8, true);
+
             } else if (mapName === 'snow_drift_area') {
                 const points = mapWaypoints[mapName];
                 centerPath = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(p.x, 0, p.z)), false);
+
+            } else if (mapName === 'building_city') {
+                const s = 150;
+                roadShape = new THREE.Shape();
+                roadShape.moveTo(-s, -s);
+                roadShape.lineTo(-s, s);
+                roadShape.lineTo(s, s);
+                roadShape.lineTo(s, -s);
+                roadShape.lineTo(-s, -s);
+                roadGeometry = new THREE.ShapeGeometry(roadShape);
+
+                const points = mapWaypoints[mapName];
+                centerPath = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(p.x, 0, p.z)), true);
+
+            } else if (mapName === 'simple_parking_lot') {
+                const s = 80;
+                roadShape = new THREE.Shape();
+                roadShape.moveTo(-s, -s);
+                roadShape.lineTo(-s, s);
+                roadShape.lineTo(s, s);
+                roadShape.lineTo(s, -s);
+                roadShape.lineTo(-s, -s);
+                roadGeometry = new THREE.ShapeGeometry(roadShape);
+
+                const points = mapWaypoints[mapName];
+                centerPath = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(p.x, 0, p.z)), true);
             }
 
-            // 3. RoadMesh hinzufügen (außer bei Schnee-Drift-Fläche)
-            if (!isSnowMap) {
+            // 3. RoadMesh hinzufügen (außer bei Schnee-Drift-Fläche, die hat kein extra Mesh)
+            if (mapName !== 'snow_drift_area') {
                 
                 const roadTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/lava/lavatile.jpg'); 
                 roadTexture.wrapS = THREE.RepeatWrapping;
@@ -1281,10 +1526,10 @@
                 roadTexture.repeat.set(mapName === 'parking_lot' ? 30 : 15, mapName === 'parking_lot' ? 30 : 15);
                 
                 const roadMaterial = new THREE.MeshStandardMaterial({ 
-                    color: mapName === 'parking_lot' ? 0x222222 : 0x444444, // Dunkles Grau für Parkplatz/Rennstrecke
+                    color: 0x99aacc, // <<< GEÄNDERT: Bläulich-Grauer Eis-Look für die Straße
                     map: roadTexture, 
-                    metalness: 0.1, 
-                    roughness: mapName === 'parking_lot' ? 0.9 : 0.8 
+                    metalness: 0.3, 
+                    roughness: 0.5
                 });
 
                 roadMesh = new THREE.Mesh(roadGeometry, roadMaterial);
@@ -1294,24 +1539,85 @@
                 roadMesh.castShadow = true; 
                 scene.add(roadMesh);
                 
-                // Parkplatz Details (V36)
+                // Parkplatz Details (V36) + Spezial-Elemente
                 if (mapName === 'parking_lot') {
                     const s = 150;
-                    createParkingLines(s); 
-                    
+                    createParkingLines(s);
+
                     const boundary = s - 10;
-                    for(let i = -1; i <= 1; i++) { 
-                        createLamppost(boundary * i, boundary); 
-                        createLamppost(boundary * i, -boundary); 
+                    for(let i = -1; i <= 1; i++) {
+                        createLamppost(boundary * i, boundary);
+                        createLamppost(boundary * i, -boundary);
                         createLamppost(boundary, boundary * i);
                         createLamppost(-boundary, boundary * i);
                     }
+
+                    // Spezial-Elemente für Parkplatz
+                    createBarrel(0, 30); // Hindernisse im Zentrum
+                    createBarrel(30, 0);
+                    createBarrel(0, -30);
+                    createBarrel(-30, 0);
+                    createCone(20, 20); // Slalom-Kegel
+                    createCone(-20, 20);
+                    createCone(20, -20);
+                    createCone(-20, -20);
+                    createJumpRamp(50, 50, Math.PI / 4); // Kleine Rampe
+                    createCheckpoint(100, 100, Math.PI / 4, false);
                 }
-                
-                // Rennstrecken-Details (V37/V38)
+
+                // Rennstrecken-Details (V37/V38) + Spezial-Elemente
                 if (mapName === 'race_track') {
                     createCurbs(centerPath);
                     createStartFinishLine(centerPath); // Nur Linie, kein Bogen mehr
+
+                    // Spezial-Elemente für Rennstrecke
+                    createBarrel(50, 100); // Hindernis nahe der Startlinie
+                    createBarrel(-50, 100);
+                    createCone(80, 60); // Kegel in Kurven
+                    createCone(-80, 60);
+                    createCone(80, -60);
+                    createCone(-80, -60);
+                    createJumpRamp(0, 80, 0); // Sprungrampe in der Geraden
+                    createCheckpoint(100, 80, Math.PI / 2, false); // Checkpoint
+                    createCheckpoint(-100, -80, -Math.PI / 2, false);
+                }
+
+                // Stadt mit Gebäuden Details
+                if (mapName === 'building_city') {
+                    const s = 150;
+                    createParkingLines(s);
+
+                    // Gebäude um die Strecke herum
+                    createBuilding(200, 0, 40, 50, 40, 0x888888); // Großes Gebäude
+                    createBuilding(-200, 0, 40, 30, 40, 0xaaaaaa);
+                    createBuilding(0, 200, 40, 40, 40, 0x777777);
+                    createBuilding(0, -200, 40, 35, 40, 0x999999);
+                    createBuilding(150, 150, 30, 25, 30, 0xbbbbbb); // Kleineres Gebäude
+                    createBuilding(-150, 150, 30, 20, 30, 0xcccccc);
+                    createBuilding(150, -150, 30, 28, 30, 0xdddddd);
+                    createBuilding(-150, -150, 30, 22, 30, 0xeeeeee);
+
+                    // Spezial-Elemente für Stadt
+                    createBarrel(50, 50); // Hindernisse
+                    createBarrel(-50, -50);
+                    createCone(80, 0); // Kegel für Kurven
+                    createCone(-80, 0);
+                    createCone(0, 80);
+                    createCone(0, -80);
+                    createJumpRamp(100, 0, 0); // Rampe
+                    createCheckpoint(120, 120, Math.PI / 4, false);
+                }
+
+                // Einfacher Parkplatz Details
+                if (mapName === 'simple_parking_lot') {
+                    const s = 80;
+                    createParkingLines(s);
+
+                    // Nur grundlegende Elemente, keine Extras
+                    createBarrel(0, 20);
+                    createBarrel(20, 0);
+                    createBarrel(0, -20);
+                    createBarrel(-20, 0);
                 }
             }
 
@@ -1339,18 +1645,14 @@
             // 1. Set Map Physics Modifiers & Sky/Fog
             if (mapName === 'snow_drift_area') {
                 currentMapPhysics = {
-                    longitudinalGripFactor: 0.6, 
-                    sideGripFactor: 0.2,         
+                    longitudinalGripFactor: 0.6,
+                    sideGripFactor: 0.2,
                 };
-                scene.background.setHex(0xcccccc); 
-                scene.fog.color.setHex(0xcccccc); 
             } else {
                 currentMapPhysics = {
                     longitudinalGripFactor: 1.0,
                     sideGripFactor: 1.0,
                 };
-                scene.background.setHex(0x87CEEB); 
-                scene.fog.color.setHex(0x87CEEB); 
             }
             applySettingsToGame(); 
 
@@ -1358,9 +1660,21 @@
             const { roadMesh, centerPath } = createTrack(mapName);
             waypoints = centerPath.points.map(p => ({ x: p.x, z: p.z })); 
             
-            // 3. Bäume/Deko nur für Schneekarte und wenn Setting an
-            if (mapName === 'snow_drift_area' && gameSettings.trees !== 'off') {
-                 createTrees(mapName); 
+            // 3. Bäume/Deko überall (Weihnachts-Edition)
+            if (gameSettings.trees !== 'off') {
+                 createTrees(mapName);
+            }
+
+            // Spezial-Elemente für Schnee-Drift-Fläche
+            if (mapName === 'snow_drift_area') {
+                createBarrel(20, 20); // Hindernisse
+                createBarrel(-20, -20);
+                createCone(30, 0);
+                createCone(-30, 0);
+                createCone(0, 30);
+                createCone(0, -30);
+                createJumpRamp(40, 40, Math.PI / 6); // Rampe für Sprünge
+                createCheckpoint(50, 50, Math.PI / 4, false);
             }
             
             // 4. Auto erstellen und positionieren
